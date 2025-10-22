@@ -77,7 +77,7 @@ async def list_block_devices(host: Optional[str] = None, username: Optional[str]
         return f"Error listing block devices: {str(e)}"
 
 
-async def list_directories_by_size(  # noqa: C901
+async def list_directories_by_size(
     path: str,
     top_n: int,
     host: Optional[str] = None,
@@ -264,7 +264,7 @@ async def list_directories_by_name(
         return f"Error listing directories: {str(e)}"
 
 
-async def list_directories_by_modified_date(  # noqa: C901
+async def list_directories_by_modified_date(
     path: str,
     newest_first: bool = True,
     host: Optional[str] = None,

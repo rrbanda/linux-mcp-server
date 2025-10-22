@@ -12,7 +12,7 @@ from .ssh_executor import execute_command
 from .utils import format_bytes
 
 
-async def get_system_info(host: Optional[str] = None, username: Optional[str] = None) -> str:  # noqa: C901
+async def get_system_info(host: Optional[str] = None, username: Optional[str] = None) -> str:
     """
     Get basic system information.
 
@@ -134,7 +134,7 @@ async def get_system_info(host: Optional[str] = None, username: Optional[str] = 
         return f"Error gathering system information: {str(e)}"
 
 
-async def get_cpu_info(host: Optional[str] = None, username: Optional[str] = None) -> str:  # noqa: C901
+async def get_cpu_info(host: Optional[str] = None, username: Optional[str] = None) -> str:
     """
     Get CPU information.
 
@@ -420,7 +420,7 @@ async def get_disk_usage(host: Optional[str] = None, username: Optional[str] = N
         return f"Error gathering disk usage information: {str(e)}"
 
 
-async def get_hardware_info(host: Optional[str] = None, username: Optional[str] = None) -> str:  # noqa: C901
+async def get_hardware_info(host: Optional[str] = None, username: Optional[str] = None) -> str:
     """
     Get hardware information.
 

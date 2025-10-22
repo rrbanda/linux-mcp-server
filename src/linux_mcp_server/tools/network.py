@@ -10,7 +10,7 @@ from .ssh_executor import execute_command
 from .utils import format_bytes
 
 
-async def get_network_interfaces(  # noqa: C901
+async def get_network_interfaces(
     host: Optional[str] = None,
     username: Optional[str] = None,
 ) -> str:

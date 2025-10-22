@@ -13,6 +13,7 @@ from .audit import log_tool_complete
 from .config import get_config
 from .tools import logs
 from .tools import network
+from .tools import network_monitoring
 from .tools import processes
 from .tools import services
 from .tools import storage
@@ -423,6 +424,121 @@ async def list_directories_by_modified_date(
     )
 
 
+# Network Monitoring Tools (eBPF Integration)
+@mcp.tool()
+async def get_network_events_history(
+    minutes: int = 30,
+    filter_by_process: Optional[str] = None,
+    filter_by_port: Optional[int] = None,
+    host: Optional[str] = None,
+    username: Optional[str] = None,
+) -> str:
+    """Get network event history from eBPF collector logs.
+
+    Retrieves network events collected by the eBPF monitoring agent,
+    with optional filtering by process name or port number.
+
+    Args:
+        minutes: Time window in minutes (default: 30)
+        filter_by_process: Filter events by process name (optional)
+        filter_by_port: Filter events by port number (optional)
+        host: Remote host to connect to via SSH (optional, executes locally if not provided)
+        username: SSH username for remote host (required if host is provided)
+    """
+    return await _execute_tool(
+        "get_network_events_history",
+        network_monitoring.get_network_events_history,
+        minutes=minutes,
+        filter_by_process=filter_by_process,
+        filter_by_port=filter_by_port,
+        host=host,
+        username=username,
+    )
+
+
+@mcp.tool()
+async def detect_network_anomalies(
+    minutes: int = 30,
+    host: Optional[str] = None,
+    username: Optional[str] = None,
+) -> str:
+    """Analyze network events and detect suspicious patterns.
+
+    Detects various anomalies including:
+    - High connection rate (potential DDoS or scanning)
+    - Port scanning behavior
+    - Connections to unusual/suspicious ports
+    - New processes with network activity
+    - Failed connection patterns
+
+    Args:
+        minutes: Time window in minutes (default: 30)
+        host: Remote host to connect to via SSH (optional, executes locally if not provided)
+        username: SSH username for remote host (required if host is provided)
+    """
+    return await _execute_tool(
+        "detect_network_anomalies",
+        network_monitoring.detect_network_anomalies,
+        minutes=minutes,
+        host=host,
+        username=username,
+    )
+
+
+@mcp.tool()
+async def analyze_process_network_behavior(
+    pid: int,
+    minutes: int = 60,
+    host: Optional[str] = None,
+    username: Optional[str] = None,
+) -> str:
+    """Deep dive into a specific process's network behavior.
+
+    Provides detailed analysis of network activity for a specific process,
+    including connection patterns, ports accessed, remote hosts contacted,
+    and behavior classification.
+
+    Args:
+        pid: Process ID to analyze
+        minutes: Time window in minutes (default: 60)
+        host: Remote host to connect to via SSH (optional, executes locally if not provided)
+        username: SSH username for remote host (required if host is provided)
+    """
+    return await _execute_tool(
+        "analyze_process_network_behavior",
+        network_monitoring.analyze_process_network_behavior,
+        pid=pid,
+        minutes=minutes,
+        host=host,
+        username=username,
+    )
+
+
+@mcp.tool()
+async def get_network_event_stats(
+    minutes: int = 30,
+    host: Optional[str] = None,
+    username: Optional[str] = None,
+) -> str:
+    """Get summary statistics about network events.
+
+    Provides high-level statistics and trends about network activity,
+    including event counts, top processes, top ports, and timeline.
+
+    Args:
+        minutes: Time window in minutes (default: 30)
+        host: Remote host to connect to via SSH (optional, executes locally if not provided)
+        username: SSH username for remote host (required if host is provided)
+    """
+    return await _execute_tool(
+        "get_network_event_stats",
+        network_monitoring.get_network_event_stats,
+        minutes=minutes,
+        host=host,
+        username=username,
+    )
+
+
 async def _execute_tool(tool_name: str, handler, **kwargs):
     """Execute a tool with logging and error handling.
 
@@ -451,29 +567,30 @@ async def _execute_tool(tool_name: str, handler, **kwargs):
 def main():
     """Run the MCP server using FastMCP."""
     logger.info("Initialized linux-diagnostics v0.1.0")
-    
+
     # Load configuration
     config = get_config()
     logger.info(f"Configuration loaded: {len(config.hosts)} hosts configured")
-    
+
     # Determine transport mode
     transport = os.getenv("LINUX_MCP_TRANSPORT", "stdio").lower()
-    
+
     if transport == "http" or transport == "streamable-http":
         # HTTP/streamable-http transport for OpenShift
         # Get host and port from environment (with fallbacks)
         host = os.getenv("FASTMCP_HOST", os.getenv("LINUX_MCP_HOST", "0.0.0.0"))
         port = int(os.getenv("FASTMCP_PORT", os.getenv("LINUX_MCP_PORT", os.getenv("MCP_PORT", "8000"))))
-        
+
         logger.info(f"📡 Starting FastMCP server on streamable-http transport: {host}:{port}")
-        
+
         # Get the streamable-http ASGI app from FastMCP and run uvicorn directly
         # This gives us full control over host/port binding (needed for OpenShift)
         import uvicorn
+
         from starlette.middleware.cors import CORSMiddleware
-        
+
         app = mcp.streamable_http_app()
-        
+
         # Add CORS middleware to allow browser-based tools like MCP Inspector
         app.add_middleware(
             CORSMiddleware,
@@ -482,7 +599,7 @@ def main():
             allow_methods=["*"],  # Allow all methods (GET, POST, OPTIONS, etc.)
             allow_headers=["*"],  # Allow all headers
         )
-        
+
         logger.info("✅ CORS middleware enabled for browser-based MCP clients")
         uvicorn.run(app, host=host, port=port, log_level="info")
     else:

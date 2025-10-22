@@ -126,7 +126,7 @@ async def get_audit_logs(
         return f"Error reading audit logs: {str(e)}"
 
 
-async def read_log_file(  # noqa: C901
+async def read_log_file(
     log_path: str,
     lines: int = 100,
     host: Optional[str] = None,

@@ -135,6 +135,7 @@ mccabe.max-complexity = 12
 # Exclude specific rules if needed
 ignore = [
     "E501",  # Ignore line length (similar to flake8's max-line-length)
+    "C901",  # Ignore complexity for analysis functions (acceptable for data processing)
 ]
 
 

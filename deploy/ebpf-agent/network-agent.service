@@ -1,0 +1,28 @@
+[Unit]
+Description=eBPF Network Activity Monitoring Agent
+After=network.target
+Documentation=https://github.com/raghurambanda/linux-mcp-server
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/network-agent
+ExecStart=/usr/bin/python3 /opt/network-agent/agent.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Security hardening (while still allowing eBPF)
+NoNewPrivileges=false
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log
+
+# Environment
+Environment="PYTHONUNBUFFERED=1"
+
+[Install]
+WantedBy=multi-user.target
+

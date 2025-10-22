@@ -8,8 +8,6 @@ import logging
 import os
 
 from pathlib import Path
-from typing import Any
-from typing import Dict
 from typing import List
 from typing import Optional
 
@@ -183,10 +181,7 @@ def load_config_from_file(config_path: str) -> ServerConfig:
         logging_config=logging_config,
     )
 
-    logger.info(
-        f"Configuration loaded: {len(hosts)} hosts, "
-        f"{len(allowed_log_paths)} allowed log paths"
-    )
+    logger.info(f"Configuration loaded: {len(hosts)} hosts, {len(allowed_log_paths)} allowed log paths")
 
     return config
 
@@ -296,4 +291,3 @@ def reload_config() -> ServerConfig:
     global _config
     _config = load_config()
     return _config
-

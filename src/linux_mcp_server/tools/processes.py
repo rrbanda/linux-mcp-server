@@ -97,7 +97,7 @@ async def list_processes(host: Optional[str] = None, username: Optional[str] = N
         return f"Error listing processes: {str(e)}"
 
 
-async def get_process_info(  # noqa: C901
+async def get_process_info(
     pid: int,
     host: Optional[str] = None,
     username: Optional[str] = None,

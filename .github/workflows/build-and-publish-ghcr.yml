@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feature/openshift-deployment
+      - feature/network-monitoring-ebpf
     paths:
       - 'Dockerfile'
       - '.dockerignore'

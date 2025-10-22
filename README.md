@@ -32,6 +32,9 @@ graph TB
                 Network[Network]
                 Storage[Storage]
             end
+            subgraph Row3[" "]
+                NetMon[Network Monitoring<br/>eBPF Integration]
+            end
         end
 
         Executor[SSH Executor]
@@ -60,12 +63,14 @@ graph TB
     style Logs fill:#64748b,stroke:#475569,color:#fff
     style Network fill:#64748b,stroke:#475569,color:#fff
     style Storage fill:#64748b,stroke:#475569,color:#fff
+    style NetMon fill:#ef4444,stroke:#dc2626,color:#fff
     style Executor fill:#10b981,stroke:#059669,color:#fff
     style Logger fill:#8b5cf6,stroke:#7c3aed,color:#fff
     style Local fill:#eab308,stroke:#ca8a04,color:#fff
     style Remote fill:#eab308,stroke:#ca8a04,color:#fff
     style Row1 fill:none,stroke:none
     style Row2 fill:none,stroke:none
+    style Row3 fill:none,stroke:none
 ```
 
 ### Key Components
@@ -103,6 +108,14 @@ graph TB
 - `get_network_interfaces` - Network interface information
 - `get_network_connections` - Active network connections
 - `get_listening_ports` - Ports listening on the system
+
+### Network Monitoring (eBPF Integration)
+- `get_network_events_history` - Retrieve network events from eBPF collector logs with filtering
+- `detect_network_anomalies` - Analyze events and detect suspicious patterns (port scanning, backdoors, etc.)
+- `analyze_process_network_behavior` - Deep dive into specific process network activity with risk classification
+- `get_network_event_stats` - Summary statistics about network activity with timelines
+
+**Requirements**: These tools require the eBPF network monitoring agent to be deployed on the target system. See `deploy/ebpf-agent/README.md` for installation instructions.
 
 ### Storage & Disk Analysis
 - `list_block_devices` - Block devices and partitions
